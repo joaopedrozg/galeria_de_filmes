@@ -62,6 +62,14 @@
     font-weight: bold;
 }
 
+/* Home */
+
+#main-container{
+    background-color: #000;
+    color: #fff;
+    min-height: 65vh;
+    padding: 40px;
+}
 
 /* Footer */
 
@@ -75,7 +83,7 @@
 
 #social-container ul,
 #footer-links-container ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
 
@@ -97,17 +105,17 @@
     background-color: #333;
 }
 
-#social-container a,
-#footer-links-container a {
+#social-container li a,
+#footer-links-container li a {
     color: #fff;
     transition: .5s;
 }
 
 #socian-container li i {
-    font-size: 20px;
+    font-size: 25px;
 
 }
 
 #footer-links-container {
-    margin: 30px;
+    margin: 30px 0;
 }
