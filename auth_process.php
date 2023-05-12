@@ -10,6 +10,7 @@ use function PHPSTORM_META\type;
 
 
     $message = new Message($BASE_URL);
+    $userDao = new UserDAO($conn, $BASE_URL);
 
 
 
@@ -31,6 +32,38 @@ use function PHPSTORM_META\type;
         // Verificação de dados mínimos
         if($name && $lastname && $email && $password){
 
+            if($password === $confirmpassword){
+                
+                    // verifica se o e-mail já esta cadastrado
+                if($userDao->findByEmail($email) === false){
+                    
+                    $user = new User();
+
+                    // Criação de token e senha 
+                    
+                    $userToken = $user->generateToken();
+                    $finalPassword = $user->generatePassword($password);
+
+                    $user->name = $name;
+                    $user->lastname = $lastname;
+                    $user->email = $email;
+                    $user->password = $finalPassword;
+                    $user->token = $userToken;
+                    
+                    $auth = true;
+
+                    $userDao->create($user, $auth);
+
+
+                } else {
+                    // Enviar msg de erro, usuario já existes
+                    $message->setMessage("Usuário já cadastrado, tente outro e-mail.", "error", "back");
+                }
+
+            } else {
+                // Enviar msg de erro, de senha não batem
+                $message->setMessage("As senhas não são iguais.", "error", "back");
+            }
 
         } else {
             // Enviar msg de erro, de dados faltantes
