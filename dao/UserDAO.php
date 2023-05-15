@@ -61,11 +61,61 @@
 
     }
 
-    public function update(User $user){
+    public function update(User $user, $redirect = true){
+        
+
+        $stmt = $this->conn->prepare("UPDATE users SET
+            name = :name,
+            lastname = :lastname,
+            email = :email,
+            image = :image,
+            bio = :bio,
+            token = :token
+            WHERE id = :id
+        ");
+
+        $stmt->bindParam(":name", $user->name);
+        $stmt->bindParam(":lastname", $user->lastname);
+        $stmt->bindParam(":email", $user->email);
+        $stmt->bindParam(":image", $user->image);
+        $stmt->bindParam(":bio", $user->bio);
+        $stmt->bindParam(":token", $user->token);
+        $stmt->bindParam(":id", $user->id);
+
+        $stmt->execute();
+
+        //Redireciona para o perfil do usuário
+
+        if($redirect){
+
+            $this->message->setMessage("Dados Atualizados com sucesso", "success", "editprofile.php");
+        }
+
 
     }
 
     public function verifyToken($protected = false){
+
+        if(!empty($_SESSION["token"])){
+
+            // pega o token da session
+            $token = $_SESSION["token"];
+            $user = $this->findByToken($token);
+
+            if($user){
+                return $user;
+
+            } else if ($protected){
+                // redireciona o suário não autenticado
+            $this->message->setMessage("Faça a autenticação para acessar essa página", "error", "index.php");
+
+            }
+
+        }else if ($protected){
+            // redireciona o suário não autenticado
+        $this->message->setMessage("Faça a autenticação para acessar essa página", "error", "index.php");
+
+        }
 
     }
 
@@ -86,6 +136,35 @@
     }
 
     public function authenticateUser($email, $password){
+
+        $user = $this->findByEmail($email);
+
+        if($user){
+            // checar se as senhas batem
+
+            if (password_verify($password, $user->password)){
+
+                // Gerar token e inserir na session
+                 $token = $user->generateToken();
+                 $this->setTokenToSession($token, false);
+
+                 // atualizar o token do usuário
+
+                 $user->token = $token;
+
+                 $this->update($user, false);
+
+                 return true;
+
+
+
+            } else{
+                return false;
+            }
+
+        } else{
+            return false;
+        }
 
     }
 
@@ -118,11 +197,39 @@
     }
 
     public function findByToken($token){
+        if ($token != ""){
 
+            $stmt = $this->conn->prepare("SELECT * FROM users WHERE token = :token");
+            $stmt->bindParam(":token", $token);
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+                $data = $stmt->fetch();
+                $user = $this->builUser($data);
+                return $user;
+
+            }else{
+                return false;
+            }
+
+        } else {
+
+            return false;
+        }
+
+    }
+
+    public function destroyToken(){
+        // remove token da session
+        $_SESSION["token"] = "";
+
+        // redireciona para o index
+
+        $this->message->setMessage("Você fez o logout com suceso!", "success", "index.php");
     }
 
     public function changePassword(User $user){
 
     }
 
-    }
+}
