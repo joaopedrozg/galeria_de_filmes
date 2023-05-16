@@ -1,7 +1,5 @@
 <?php
 
-use function PHPSTORM_META\type;
-
     require_once("globals.php");
     require_once("db.php");
     require_once("models/User.php");
