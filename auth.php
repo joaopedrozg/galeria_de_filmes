@@ -20,7 +20,7 @@
                         <input type="password" class="form-control" id="password" name="password" placeholder="Digite sua senha">
 
                     </div>
-                    <br>
+                   
                     <input type="submit" class="btn card-btn" value="Entrar">
 
 
@@ -55,7 +55,7 @@
                         <input type="password" class="form-control" id="comfirmpassword" name="confirmpassword" placeholder="Confirme sua senha">
 
                     </div>
-                    <br>
+                    
                     <input type="submit" class="btn card-btn" value="Registrar">
                 </form>
             </div>

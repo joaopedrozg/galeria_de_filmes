@@ -225,10 +225,25 @@
 
         // redireciona para o index
 
-        $this->message->setMessage("Você fez o logout com suceso!", "success", "index.php");
+        $this->message->setMessage("Você fez o logout com sucesso!", "success", "index.php");
     }
 
     public function changePassword(User $user){
+
+        $stmt = $this->conn->prepare("UPDATE users SET
+        password = :password
+        WHERE id = :id
+        ");
+
+        $stmt->bindParam(":password", $user->password);
+        $stmt->bindParam(":id", $user->id);
+
+        $stmt->execute();
+
+        $this->message->setMessage("Senha alterada com suceso!", "success", "editprofile.php");
+
+
+
 
     }
 

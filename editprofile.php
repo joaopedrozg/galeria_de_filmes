@@ -39,7 +39,7 @@
                     <label for="email">E-mail:</label>
                     <input type="text" readonly class="form-control disabled" id="email" name="email" placeholder="Digite o seu sobrenome" value="<?= $userData->email ?>">
                 </div>
-                <br>
+               
                 <input type="submit" class="btn card-btn" value="Alterar">
 
             </div>
@@ -65,6 +65,7 @@
                 <form action="<?=$BASE_URL ?>user_process.php" method="post">
 
                 <input type="hidden" name="type" value="changepassword">
+                
 
                 <div class="form-group">
                     <label for="password">Senha:</label>
@@ -75,7 +76,7 @@
                     <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirme a sua nova senha">
                 </div>
 
-                <br>
+                
 
                 <input type="submit" class="btn card-btn" value="Alterar Senha">
             

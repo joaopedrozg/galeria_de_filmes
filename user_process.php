@@ -36,6 +36,44 @@
         $userData->email = $email;
         $userData->bio = $bio;
 
+        // upload da imagem
+
+        if(isset($_FILES["image"]) && !empty($_FILES["image"]["tmp_name"])){
+            
+            $image = $_FILES["image"];
+            $imageTypes = ["image/jpeg", "image/jpg", "image/png"];
+            $jpgArray = ["image/jpeg", "image/jpg"];
+
+            if(in_array($image["type"], $imageTypes)){
+
+                if (in_array($image, $jpgArray)){
+
+                    $imageFile = imagecreatefrompng($image["tmp_name"]);
+
+
+                    // Imagem é png
+                } else{
+
+                    $imageFile = imagecreatefrompng($image["tmp_name"]);
+
+                }
+
+                $imageName = $user->imageGenerateName();
+
+                imagejpeg($imageFile, "./img/users/" . $imageName, 100);
+
+                $userData->image = $imageName;
+
+            } else {
+
+                $message->setMessage("Tipo inválido de imagem, insira png ou jpg!", "error", "back");
+           
+            }
+
+
+
+        }
+
         $userDao->update($userData);
 
 
@@ -43,7 +81,36 @@
 
     // Atualizar senha do usuário
     } else if ($type === "changepassword"){
-        print_r($_POST); exit;
+
+        $password = filter_input(INPUT_POST, "password");
+        $confirmpassword = filter_input(INPUT_POST, "confirmpassword");
+       
+
+        // Resgata dados do usuário
+        $userData = $userDao->verifyToken();
+
+        $id = $userData->id;
+
+        if($password === $confirmpassword){
+
+            // cria um novo objeto de usuário
+            $user = new User();
+
+            $finalPassword = $user->generatePassword($password);
+
+            $user->password = $finalPassword;
+            $user->id = $id;
+
+            $userDao->changePassword($user);
+
+
+
+        } else{
+
+            $message->setMessage("As senhas não são iguais", "error", "back");
+
+        }
+        
 
     } else {
         $message->setMessage("Informações inválidas", "error", "index.php");
