@@ -17,7 +17,7 @@
         }
 
 
-        public function buidMovie($data){
+        public function buildMovie($data){
         
         $movie = new Movie();
 
@@ -37,18 +37,98 @@
 
         }
         public function getLatesMovies(){
+            $movies = [];
+
+            $stmt = $this->conn->query("SELECT * FROM movies ORDER BY id DESC");
+
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+
+                $moviesArray = $stmt->fetchAll();
+
+                foreach($moviesArray as $movie){
+                    $movies[] = $this->buildMovie($movie);
+                }
+
+            }
+
+            return $movies;
 
         }
         public function getMoviesByCategory($category){
+            $movies = [];
+
+            $stmt = $this->conn->prepare("SELECT * FROM movies
+                                          WHERE category = :category
+                                          ORDER BY id DESC");
+
+            $stmt->bindParam(":category", $category);
+
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+
+                $moviesArray = $stmt->fetchAll();
+
+                foreach($moviesArray as $movie){
+                    $movies[] = $this->buildMovie($movie);
+                }
+
+            }
+
+            return $movies;
 
         }
         public function getMoviesByUserId($id){
+            $movies = [];
+
+            $stmt = $this->conn->prepare("SELECT * FROM movies
+                                          WHERE users_id = :users_id");
+
+            $stmt->bindParam(":users_id", $id);
+
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+
+                $moviesArray = $stmt->fetchAll();
+
+                foreach($moviesArray as $movie){
+                    $movies[] = $this->buildMovie($movie);
+                }
+
+            }
+
+            return $movies;
 
         }
         public function findById($id){
+            $movie = [];
 
+            $stmt = $this->conn->prepare("SELECT * FROM movies
+                                          WHERE id = :id");
+
+            $stmt->bindParam(":id", $id);
+
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+
+                $movieData = $stmt->fetch();
+
+                $movie = $this->buildMovie($movieData);
+
+                return $movie;
+
+             } else{
+
+                return false;
+             }
         }
+
         public function findByTitle($title){
+
 
         }
         public function create(Movie $movie){
